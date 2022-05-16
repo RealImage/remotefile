@@ -122,10 +122,10 @@ func (rf *RemoteFile) send(p []byte, start int64, end int64) (n int, err error) 
 	req.Header.Set("Range", fmt.Sprintf("bytes=%v-%v", start, end))
 
 	r, err := http.DefaultClient.Do(req)
-	defer r.Body.Close()
 	if err != nil {
 		return 0, err
 	}
+	defer r.Body.Close()
 
 	n, err = io.ReadAtLeast(r.Body, p, int(end-start))
 
