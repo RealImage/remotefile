@@ -48,7 +48,6 @@ func (rf RemoteFile) ReadAt(p []byte, off int64) (n int, err error) {
 }
 
 func (rf *RemoteFile) Seek(offset int64, whence int) (int64, error) {
-
 	switch whence {
 	case io.SeekCurrent:
 		if rf.offset+offset >= rf.Length {
