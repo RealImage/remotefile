@@ -25,7 +25,7 @@ type RemoteFile struct {
 func (rf *RemoteFile) Read(p []byte) (n int, err error) {
 	start, end := rf.calcRange(rf.offset, int64(len(p)))
 
-	n, err = rf.send(p, start, end)
+	n, err = rf.readInto(p, start, end)
 
 	rf.offset += int64(n)
 	if rf.offset >= rf.Length-1 {
@@ -38,7 +38,7 @@ func (rf *RemoteFile) Read(p []byte) (n int, err error) {
 func (rf RemoteFile) ReadAt(p []byte, off int64) (n int, err error) {
 	start, end := rf.calcRange(off, int64(len(p)))
 
-	n, err = rf.send(p, start, end)
+	n, err = rf.readInto(p, start, end)
 
 	if off+end-start >= rf.Length-1 {
 		err = io.EOF
@@ -113,7 +113,7 @@ func (rf *RemoteFile) calcRange(offset int64, length int64) (int64, int64) {
 	return start, end
 }
 
-func (rf *RemoteFile) send(p []byte, start int64, end int64) (n int, err error) {
+func (rf *RemoteFile) readInto(buf []byte, start int64, end int64) (n int, err error) {
 	req, err := http.NewRequest("GET", rf.URL.String(), nil)
 	if err != nil {
 		return 0, err
@@ -126,7 +126,7 @@ func (rf *RemoteFile) send(p []byte, start int64, end int64) (n int, err error) 
 	}
 	defer r.Body.Close()
 
-	n, err = io.ReadAtLeast(r.Body, p, int(end-start))
+	n, err = io.ReadAtLeast(r.Body, buf, int(end-start))
 
 	return n, err
 }
