@@ -10,7 +10,8 @@ import (
 	"time"
 )
 
-var ErrOutOfBounds = errors.New("seek offset out of bounds")
+var ErrOffset = errors.New("Seek: invalid offset")
+var ErrWhence = errors.New("Seek: invalid whence")
 
 // RemoteFile implements `fs.File`, `fs.FileInfo`, `io.ReadSeekCloser`, `io.ReaderAt`
 type RemoteFile struct {
@@ -49,25 +50,19 @@ func (rf RemoteFile) ReadAt(p []byte, off int64) (n int, err error) {
 
 func (rf *RemoteFile) Seek(offset int64, whence int) (int64, error) {
 	switch whence {
-	case io.SeekCurrent:
-		if rf.offset+offset >= rf.Length {
-			return rf.offset, ErrOutOfBounds
-		}
-		rf.offset += offset
-
-	case io.SeekEnd:
-		if rf.Length-offset <= 0 {
-			return rf.offset, ErrOutOfBounds
-		}
-		rf.offset = rf.Length - offset
-
 	default:
-		if offset >= rf.Length {
-			return rf.offset, ErrOutOfBounds
-		}
-		rf.offset = offset
-
+		return 0, ErrWhence
+	case io.SeekStart:
+		// do nothing
+	case io.SeekCurrent:
+		offset += rf.offset
+	case io.SeekEnd:
+		offset = rf.Length - offset
 	}
+	if offset < 0 || offset >= rf.Length-1 {
+		return rf.offset, ErrOffset
+	}
+	rf.offset = offset
 	return rf.offset, nil
 }
 

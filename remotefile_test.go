@@ -118,7 +118,7 @@ func TestRemoteFile_Seek(t *testing.T) {
 	}
 
 	currentOffset, err = rf.Seek(100, io.SeekCurrent)
-	if err != ErrOutOfBounds {
+	if err != ErrOffset {
 		t.Error("should have been an error")
 	}
 	if currentOffset != 995 {
@@ -126,7 +126,7 @@ func TestRemoteFile_Seek(t *testing.T) {
 	}
 
 	currentOffset, err = rf.Seek(1001, io.SeekStart)
-	if err != ErrOutOfBounds {
+	if err != ErrOffset {
 		t.Error("should have been an error")
 	}
 	if currentOffset != 995 {
@@ -134,11 +134,16 @@ func TestRemoteFile_Seek(t *testing.T) {
 	}
 
 	currentOffset, err = rf.Seek(1001, io.SeekEnd)
-	if err != ErrOutOfBounds {
+	if err != ErrOffset {
 		t.Error("should have been an error")
 	}
 	if currentOffset != 995 {
 		t.Error("should not have changed the offset on error.")
+	}
+
+	currentOffset, err = rf.Seek(1000, io.SeekStart)
+	if err != ErrOffset {
+		t.Error("should not allow setting offset outside bounds")
 	}
 }
 
