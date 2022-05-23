@@ -18,7 +18,7 @@ func TestRemoteFile_Read(t *testing.T) {
 
 	rf := &RemoteFile{
 		FileName:     "t1",
-		URL:          u,
+		URL:          *u,
 		Length:       int64(size),
 		LastModified: time.Now(),
 	}
@@ -46,7 +46,7 @@ func TestRemoteFile_Read2(t *testing.T) {
 	data, u := buildServer(size)
 	rf := &RemoteFile{
 		FileName:     "t1",
-		URL:          u,
+		URL:          *u,
 		Length:       int64(size),
 		LastModified: time.Now(),
 	}
@@ -62,7 +62,7 @@ func TestRemoteFile_ReadAt(t *testing.T) {
 	data, u := buildServer(size)
 	rf := &RemoteFile{
 		FileName:     "t1",
-		URL:          u,
+		URL:          *u,
 		Length:       int64(size),
 		LastModified: time.Now(),
 	}
@@ -93,7 +93,7 @@ func TestRemoteFile_Seek(t *testing.T) {
 	data, u := buildServer(size)
 	rf := &RemoteFile{
 		FileName:     "t1",
-		URL:          u,
+		URL:          *u,
 		Length:       int64(size),
 		LastModified: time.Now(),
 	}

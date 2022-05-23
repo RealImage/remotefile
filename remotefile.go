@@ -10,13 +10,13 @@ import (
 	"time"
 )
 
-var ErrOffset = errors.New("Seek: invalid offset")
-var ErrWhence = errors.New("Seek: invalid whence")
+var ErrOffset = errors.New("seek: invalid offset")
+var errWhence = errors.New("seek: invalid whence")
 
 // RemoteFile implements `fs.File`, `fs.FileInfo`, `io.ReadSeekCloser`, `io.ReaderAt`
 type RemoteFile struct {
 	FileName     string
-	URL          *url.URL
+	URL          url.URL
 	Length       int64
 	LastModified time.Time
 
@@ -51,7 +51,7 @@ func (rf RemoteFile) ReadAt(p []byte, off int64) (n int, err error) {
 func (rf *RemoteFile) Seek(offset int64, whence int) (int64, error) {
 	switch whence {
 	default:
-		return 0, ErrWhence
+		return 0, errWhence
 	case io.SeekStart:
 		// do nothing
 	case io.SeekCurrent:
